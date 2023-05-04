@@ -39,7 +39,7 @@
             <v-sheet min-height="70vh" rounded="lg">
               <v-row>
                 <v-col class="pa-10" cols="12">
-                  <c-v-entry-step1 />
+                  <c-v-entry-stepper />
                 </v-col>
               </v-row>
             </v-sheet>
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-import CVEntryStep1 from '@/components/cv-entry/CVEntryStep1.vue';
+import CVEntryStepper from '@/components/cv-entry/CVEntryStepper.vue';
 import { ref } from 'vue';
 
 const links = ref(['Dashboard', 'Messages', 'Profile', 'Updates']);

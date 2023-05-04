@@ -13,17 +13,9 @@
       </v-col>
     </v-row>
 
-    <v-row class="mt-8">
+    <v-row class="mt-10">
       <v-col cols="12" md="6" class="py-2">
-        <v-select
-          v-model="entryCV.designation"
-          :items="designation"
-          :error-messages="vuelidate.designation.$errors.map((e) => e.$message as string)"
-          label="Designation"
-          required
-          @input="vuelidate.designation.$touch"
-          @blur="vuelidate.designation.$touch"
-        />
+        <v-select v-model="entryCV.designation" :items="designations" label="Designation" />
       </v-col>
       <v-col cols="12" md="6" class="py-2 hidden-sm-and-down"></v-col>
       <v-col cols="12" md="6" class="py-2">
@@ -46,9 +38,15 @@
           @blur="vuelidate.lastName.$touch"
         />
       </v-col>
+      <v-col cols="12" md="6" class="py-2">
+        <v-select v-model="entryCV.age" :items="ageRanges" label="Age" />
+      </v-col>
+      <v-col cols="12" md="6" class="py-2">
+        <v-select v-model="entryCV.gender" :items="genders" label="Gender" />
+      </v-col>
     </v-row>
 
-    <v-row class="mt-8">
+    <v-row class="mt-10">
       <v-col cols="12" md="6" class="py-2">
         <v-text-field
           v-model="entryCV.phone"
@@ -64,36 +62,35 @@
       </v-col>
     </v-row>
 
-    <v-row class="mt-8">
+    <v-row class="mt-10">
       <v-col cols="12" class="py-2">
-        <v-text-field
-          v-model="entryCV.addressLine1"
-          :error-messages="vuelidate.addressLine1.$errors.map((e) => e.$message as string)"
-          label="Address Line 1"
-          required
-          @input="vuelidate.addressLine1.$touch"
-          @blur="vuelidate.addressLine1.$touch"
-        />
+        <v-text-field v-model="entryCV.addressLine1" label="Address Line 1" />
       </v-col>
       <v-col cols="12" class="py-2">
         <v-text-field v-model="entryCV.addressLine2" label="Address Line 2" />
       </v-col>
-      <v-col cols="12" class="py-2">
+      <v-col cols="12" md="6" class="py-2">
         <v-text-field
           v-model="entryCV.addressCity"
           :error-messages="vuelidate.addressCity.$errors.map((e) => e.$message as string)"
-          label="Address City"
+          label="Nearest City"
           required
           @input="vuelidate.addressCity.$touch"
           @blur="vuelidate.addressCity.$touch"
         />
       </v-col>
+      <v-col cols="12" md="6" class="py-2">
+        <v-checkbox v-model="entryCV.preferRemote" label="Prefer Remote" />
+      </v-col>
     </v-row>
 
-    <v-row class="mt-8">
-      <v-col cols="12" class="text-right">
-        <v-btn class="me-4" @click="vuelidate.$validate"> submit </v-btn>
-        <v-btn @click="clear"> clear </v-btn>
+    <v-row class="mt-10">
+      <v-col cols="12" class="flex-row">
+        <div class="d-flex flex-row">
+          <v-btn class="d-flex" @click="clear"> clear </v-btn>
+          <v-spacer />
+          <v-btn class="d-flex" @click="next"> next </v-btn>
+        </div>
       </v-col>
     </v-row>
   </form>
@@ -105,18 +102,20 @@ import { useVuelidate } from '@vuelidate/core';
 import { email, required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
 
+const emit = defineEmits(['on-next', 'on-submit']);
+
 const store = useCVEntryStore();
 const { entryCV } = storeToRefs(store);
 
-const designation = ['Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev', 'Other'];
+const designations = ['Prefer not to say', 'Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev', 'Other'];
+const ageRanges = ['Prefer not to say', '18-25', '26-30', '31-35', '36-45', '46-50', 'More than 50'];
+const genders = ['Prefer not to say', 'Man', 'Woman', 'Other'];
 
 const rules = {
   email: { required, email },
-  designation: { required },
   firstName: { required },
   lastName: { required },
   phone: { required },
-  addressLine1: { required },
   addressCity: { required },
 };
 
@@ -124,6 +123,24 @@ const vuelidate = useVuelidate(rules, entryCV);
 
 function clear() {
   vuelidate.value.$reset();
-  store.resetCV();
+  store.resetCV([
+    'designation',
+    'firstName',
+    'lastName',
+    'age',
+    'gender',
+    'phone',
+    'phoneAlternative',
+    'addressLine1',
+    'addressLine2',
+    'addressCity',
+    'preferRemote',
+  ]);
+}
+async function next() {
+  const valid = await vuelidate.value.$validate();
+  if (valid) {
+    emit('on-next');
+  }
 }
 </script>

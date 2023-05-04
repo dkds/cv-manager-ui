@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 export const useCVEntryStore = defineStore('cv-entry', () => {
   const initialCV = {
+    category: null,
     email: '',
     designation: null,
     firstName: '',
@@ -12,13 +13,36 @@ export const useCVEntryStore = defineStore('cv-entry', () => {
     addressLine1: '',
     addressLine2: '',
     addressCity: '',
+    preferRemote: null,
+    age: null,
+    gender: null,
+    primaryEducationLevel: '',
+    secondaryEducationLevel: '',
+    higherEducationLevel: '',
+    professionalQualifications: [] as string[],
+    experienceTotal: null,
+    experiences: [] as string[],
   };
 
   const entryCV = ref({ ...initialCV });
 
-  const resetCV = () => {
-    entryCV.value = { ...initialCV };
+  const resetCV = (fields: Array<keyof typeof initialCV>) => {
+    if (fields) {
+      entryCV.value = {
+        ...entryCV.value,
+        ...fields.reduce((acc: object, field: string) => ({ ...acc, [field]: (<any>initialCV)[field] }), {}),
+      };
+    } else {
+      entryCV.value = { ...initialCV };
+    }
   };
 
-  return { initialCV, entryCV, resetCV };
+  const updateCV = (newValues: Partial<typeof initialCV>) => {
+    entryCV.value = {
+      ...entryCV.value,
+      ...newValues,
+    };
+  };
+
+  return { initialCV, entryCV, resetCV, updateCV };
 });
