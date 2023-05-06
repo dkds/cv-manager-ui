@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-export const useCVEntryStore = defineStore('cv-entry', () => {
+export const useCVStore = defineStore('cv-entry', () => {
   const initialCV = {
     category: null,
     email: '',

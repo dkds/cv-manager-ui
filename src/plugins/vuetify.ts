@@ -32,5 +32,9 @@ export default createVuetify({
       density: 'comfortable',
       hideDetails: 'auto',
     },
+    VCheckbox: {
+      density: 'comfortable',
+      hideDetails: 'auto',
+    },
   },
 });

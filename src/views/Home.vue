@@ -1,58 +1,78 @@
 <template>
   <v-app id="inspire">
-    <v-app-bar flat>
-      <v-container class="fill-height d-flex align-center">
-        <v-avatar class="me-10 ms-4" color="grey-darken-1" size="32"></v-avatar>
+    <v-app-bar app flat scroll-behavior="elevate" scroll-threshold="0">
+      <v-toolbar-title>Employ Me</v-toolbar-title>
 
-        <v-btn v-for="link in links" :key="link" variant="text">
-          {{ link }}
-        </v-btn>
+      <v-spacer></v-spacer>
+      <v-toolbar-items class="hidden-xs me-4">
+        <v-btn prepend-icon="mdi-file-search" variant="text" to="search"> Search </v-btn>
+        <v-btn prepend-icon="mdi-file-document-plus" variant="text" to="cv"> Start Building CV </v-btn>
+      </v-toolbar-items>
 
-        <v-spacer></v-spacer>
-
-        <v-responsive max-width="260">
-          <v-text-field density="compact" hide-details variant="solo"></v-text-field>
-        </v-responsive>
-      </v-container>
+      <v-btn class="hidden-xs me-4" icon>
+        <v-icon>mdi-account</v-icon>
+        <v-menu activator="parent" open-on-hover :close-on-content-click="false">
+          <v-card min-width="300">
+            <v-list-item
+              lines="two"
+              prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
+              title="Jane Smith"
+              subtitle="Logged in"
+            >
+              <template #append>
+                <v-btn icon flat>
+                  <v-icon>mdi-logout</v-icon>
+                  <v-tooltip activator="parent">Logout</v-tooltip>
+                </v-btn>
+              </template>
+            </v-list-item>
+          </v-card>
+        </v-menu>
+      </v-btn>
+      <v-app-bar-nav-icon class="hidden-sm-and-up" @click.stop="showDrawer = !showDrawer" />
     </v-app-bar>
+
+    <v-navigation-drawer v-model="showDrawer" temporary location="right" class="hidden-sm-and-up">
+      <template v-slot:prepend>
+        <v-list-item
+          lines="two"
+          prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
+          title="Jane Smith"
+          subtitle="Logged in"
+        >
+          <template #append>
+            <v-btn icon flat>
+              <v-icon>mdi-logout</v-icon>
+              <v-tooltip activator="parent">Logout</v-tooltip>
+            </v-btn>
+          </template>
+        </v-list-item>
+      </template>
+
+      <v-divider></v-divider>
+
+      <v-list density="compact" nav>
+        <v-list-item prepend-icon="mdi-file-search" title="Search" value="search" to="search" />
+        <v-list-item prepend-icon="mdi-file-document-plus" title="Start Building CV" value="cv" to="cv" />
+      </v-list>
+    </v-navigation-drawer>
 
     <v-main class="bg-grey-lighten-3">
       <v-container>
-        <v-row>
-          <v-col cols="2">
-            <v-sheet rounded="lg">
-              <v-list rounded="lg">
-                <v-list-item v-for="n in 5" :key="n" link>
-                  <v-list-item-title> List Item {{ n }} </v-list-item-title>
-                </v-list-item>
-
-                <v-divider class="my-2"></v-divider>
-
-                <v-list-item link color="grey-lighten-4">
-                  <v-list-item-title> Refresh </v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-sheet>
-          </v-col>
-
-          <v-col>
-            <v-sheet min-height="70vh" rounded="lg">
-              <v-row>
-                <v-col class="pa-10" cols="12">
-                  <c-v-entry-stepper />
-                </v-col>
-              </v-row>
-            </v-sheet>
-          </v-col>
-        </v-row>
+        <v-sheet class="my-5" min-height="70vh" rounded="lg">
+          <v-row>
+            <v-col class="px-8 py-5" cols="12">
+              <router-view />
+            </v-col>
+          </v-row>
+        </v-sheet>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts" setup>
-import CVEntryStepper from '@/components/cv-entry/CVEntryStepper.vue';
 import { ref } from 'vue';
 
-const links = ref(['Dashboard', 'Messages', 'Profile', 'Updates']);
+const showDrawer = ref(false);
 </script>

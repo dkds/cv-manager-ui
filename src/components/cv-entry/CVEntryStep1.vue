@@ -97,14 +97,14 @@
 </template>
 
 <script lang="ts" setup>
-import { useCVEntryStore } from '@/store/cv-entry';
+import { useCVStore } from '@/store/cv-store';
 import { useVuelidate } from '@vuelidate/core';
 import { email, required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
 
 const emit = defineEmits(['on-next', 'on-submit']);
 
-const store = useCVEntryStore();
+const store = useCVStore();
 const { entryCV } = storeToRefs(store);
 
 const designations = ['Prefer not to say', 'Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev', 'Other'];

@@ -39,14 +39,14 @@
 </template>
 
 <script lang="ts" setup>
-import { useCVEntryStore } from '@/store/cv-entry';
+import { useCVStore } from '@/store/cv-store';
 import { useVuelidate } from '@vuelidate/core';
 import { email, required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
 
 const emit = defineEmits(['on-next']);
 
-const store = useCVEntryStore();
+const store = useCVStore();
 const { entryCV } = storeToRefs(store);
 
 const categories = ['IT', 'HR', 'Finance', 'Marketing', 'Sales', 'Other'];
