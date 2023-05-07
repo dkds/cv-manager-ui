@@ -31,7 +31,7 @@
       <v-col cols="12" class="flex-row">
         <div class="d-flex flex-row">
           <v-spacer />
-          <v-btn class="d-flex" @click="next"> next </v-btn>
+          <v-btn class="d-flex" color="primary" @click="next"> next </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -39,15 +39,15 @@
 </template>
 
 <script lang="ts" setup>
-import { useCVStore } from '@/store/cv-store';
+import { useCVStore } from '@/stores/cv-store';
 import { useVuelidate } from '@vuelidate/core';
 import { email, required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
 
 const emit = defineEmits(['on-next']);
 
-const store = useCVStore();
-const { entryCV } = storeToRefs(store);
+const cvStore = useCVStore();
+const { entryCV } = storeToRefs(cvStore);
 
 const categories = ['IT', 'HR', 'Finance', 'Marketing', 'Sales', 'Other'];
 

@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useCVStore } from '@/store/cv-store';
+import { useCVStore } from '@/stores/cv-store';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import CVEntryStep0 from './CVEntryStep0.vue';

@@ -11,22 +11,13 @@
 
       <v-btn class="hidden-xs me-4" icon>
         <v-icon>mdi-account</v-icon>
-        <v-menu activator="parent" open-on-hover :close-on-content-click="false">
-          <v-card min-width="300">
-            <v-list-item
-              lines="two"
-              prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
-              title="Jane Smith"
-              subtitle="Logged in"
-            >
-              <template #append>
-                <v-btn icon flat>
-                  <v-icon>mdi-logout</v-icon>
-                  <v-tooltip activator="parent">Logout</v-tooltip>
-                </v-btn>
-              </template>
-            </v-list-item>
-          </v-card>
+
+        <v-dialog v-if="!currentUser" v-model="showRegister" activator="parent" persistent width="720">
+          <user-login @on-close="showRegister = !showRegister" />
+        </v-dialog>
+
+        <v-menu v-if="currentUser" activator="parent" open-on-hover :close-on-content-click="false">
+          <user-info @on-logout="logout" />
         </v-menu>
       </v-btn>
       <v-app-bar-nav-icon class="hidden-sm-and-up" @click.stop="showDrawer = !showDrawer" />
@@ -35,13 +26,14 @@
     <v-navigation-drawer v-model="showDrawer" temporary location="right" class="hidden-sm-and-up">
       <template v-slot:prepend>
         <v-list-item
+          v-if="currentUser"
           lines="two"
-          prepend-avatar="https://randomuser.me/api/portraits/women/81.jpg"
-          title="Jane Smith"
+          :prepend-avatar="currentUser?.photo"
+          :title="currentUser?.email || currentUser?.name"
           subtitle="Logged in"
         >
           <template #append>
-            <v-btn icon flat>
+            <v-btn icon flat @click="logout" :loading="userLoading">
               <v-icon>mdi-logout</v-icon>
               <v-tooltip activator="parent">Logout</v-tooltip>
             </v-btn>
@@ -49,9 +41,13 @@
         </v-list-item>
       </template>
 
-      <v-divider></v-divider>
-
-      <v-list density="compact" nav>
+      <v-list class="py-1" density="compact" nav>
+        <v-list-item v-if="!currentUser" :active="false" prepend-icon="mdi-account" title="Login" value="login">
+          <v-dialog v-model="showRegisterMobile" activator="parent" persistent width="720">
+            <user-login @on-close="showRegisterMobile = !showRegisterMobile" />
+          </v-dialog>
+        </v-list-item>
+        <v-divider class="my-1"></v-divider>
         <v-list-item prepend-icon="mdi-file-search" title="Search" value="search" to="search" />
         <v-list-item prepend-icon="mdi-file-document-plus" title="Start Building CV" value="cv" to="cv" />
       </v-list>
@@ -72,7 +68,22 @@
 </template>
 
 <script lang="ts" setup>
+import UserInfo from '@/components/UserInfo.vue';
+import UserLogin from '@/components/user-login/UserLogin.vue';
+import { useUserStore } from '@/stores/user-store';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 
+const userStore = useUserStore();
+const { currentUser, userLoading } = storeToRefs(userStore);
+
 const showDrawer = ref(false);
+const showRegister = ref(false);
+const showRegisterMobile = ref(false);
+
+async function logout() {
+  showRegister.value = false;
+  showRegisterMobile.value = false;
+  userStore.clearUser();
+}
 </script>

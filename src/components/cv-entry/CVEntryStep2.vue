@@ -50,7 +50,7 @@
         <div class="d-flex flex-row">
           <v-btn class="d-flex" @click="clear"> clear </v-btn>
           <v-spacer />
-          <v-btn class="d-flex" @click="next"> next </v-btn>
+          <v-btn class="d-flex" color="primary" @click="next"> next </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useCVStore } from '@/store/cv-store';
+import { useCVStore } from '@/stores/cv-store';
 import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';

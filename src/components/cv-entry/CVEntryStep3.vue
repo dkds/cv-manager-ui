@@ -31,7 +31,7 @@
         <div class="d-flex flex-row">
           <v-btn class="d-flex" @click="clear"> clear </v-btn>
           <v-spacer />
-          <v-btn class="d-flex" @click="submit"> submit </v-btn>
+          <v-btn class="d-flex" color="primary" @click="submit"> submit </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useCVStore } from '@/store/cv-store';
+import { useCVStore } from '@/stores/cv-store';
 import { useVuelidate } from '@vuelidate/core';
 import { maxValue, minValue, required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
