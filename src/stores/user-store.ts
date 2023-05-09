@@ -10,7 +10,7 @@ export interface User {
   photo?: string;
 }
 
-export const useUserStore = defineStore('user', () => {
+export const useUserStore = defineStore('UserStore', () => {
   const user = ref<{ data: User | null; status: ApiStatus }>({
     data: null,
     status: ApiStatus.INIT,
