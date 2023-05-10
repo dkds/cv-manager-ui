@@ -67,7 +67,7 @@ const rules = {
       function (value: string) {
         const containsUppercase = /[A-Z]/.test(value);
         const containsLowercase = /[a-z]/.test(value);
-        const containsNumber = /[0-9]/.test(value);
+        const containsNumber = /\d/.test(value);
         const containsSpecial = /[#?!@$%^&*-]/.test(value);
         return containsUppercase && containsLowercase && containsNumber && containsSpecial;
       }
