@@ -22,7 +22,7 @@ export default defineConfig({
     environment: 'happy-dom',
     coverage: {
       provider: 'c8',
-      reporter: ['lcov', 'text'],
+      reporter: ['lcovonly', 'text'],
     },
     deps: {
       inline: ['vuetify'],
