@@ -51,5 +51,6 @@ async function next() {
 }
 async function submit() {
   console.log(entryCV.value);
+  alert(JSON.stringify(entryCV.value, null, 2));
 }
 </script>

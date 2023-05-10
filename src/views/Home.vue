@@ -1,9 +1,10 @@
 <template>
   <v-app id="inspire">
-    <v-app-bar app flat scroll-behavior="elevate" scroll-threshold="0">
-      <v-toolbar-title>Employ Me</v-toolbar-title>
-
-      <v-spacer></v-spacer>
+    <v-app-bar app flat scroll-behavior="elevate" scroll-threshold="0" color="black">
+      <router-link to="/">
+        <v-img src="@/assets/logo.png" height="48" width="220" class="mx-4 flex-grow-0" />
+      </router-link>
+      <v-spacer />
       <v-toolbar-items class="hidden-xs me-4">
         <v-btn prepend-icon="mdi-file-search" variant="text" to="search"> Search </v-btn>
         <v-btn prepend-icon="mdi-file-document-plus" variant="text" to="cv"> Start Building CV </v-btn>
