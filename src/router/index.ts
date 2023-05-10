@@ -4,16 +4,14 @@ const routes = [
   {
     path: '/',
     component: () => import('@/layouts/default/Default.vue'),
-    children: [
-      {
-        path: 'search',
-        component: () => import('@/components/CVSearch.vue'),
-      },
-      {
-        path: 'cv',
-        component: () => import('@/components/cv-entry/CVEntryStepper.vue'),
-      },
-    ],
+  },
+  {
+    path: '/search',
+    component: () => import('@/components/CVSearch.vue'),
+  },
+  {
+    path: '/cv',
+    component: () => import('@/components/cv-entry/CVEntryStepper.vue'),
   },
 ];
 

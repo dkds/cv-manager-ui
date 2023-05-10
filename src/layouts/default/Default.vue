@@ -1,9 +1,8 @@
 <template>
-  <v-app>
-    <default-view />
-  </v-app>
+  <v-img src="@/assets/employment-agency-transformed.jpeg" />
+  <div class="d-flex justify-center mt-7">
+    <v-btn color="deep-purple-accent-4" to="/cv"> Get Started </v-btn>
+  </div>
 </template>
 
-<script lang="ts" setup>
-import DefaultView from './View.vue';
-</script>
+<script lang="ts" setup></script>

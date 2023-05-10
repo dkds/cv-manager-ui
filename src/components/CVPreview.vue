@@ -49,6 +49,6 @@ async function submit() {
 <style scoped lang="scss">
 .v-card-title {
   text-shadow: 0 2px 1px #1e1e1e;
-  background: linear-gradient(0, rgb(14 14 14 / 51%) 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(to top, rgb(14 14 14 / 51%) 0%, rgba(0, 0, 0, 0) 100%);
 }
 </style>
