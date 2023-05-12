@@ -1,17 +1,6 @@
 <template>
   <form>
-    <v-row>
-      <v-col cols="12" class="py-2">
-        <v-text-field
-          v-model="entryCV.email"
-          :error-messages="vuelidate.email.$errors.map((e) => e.$message as string)"
-          label="Email"
-          required
-          @input="vuelidate.email.$touch"
-          @blur="vuelidate.email.$touch"
-        />
-      </v-col>
-    </v-row>
+    <v-row> </v-row>
 
     <v-row class="mt-10">
       <v-col cols="12" md="6" class="py-2">
@@ -26,17 +15,20 @@
           required
           @input="vuelidate.firstName.$touch"
           @blur="vuelidate.firstName.$touch"
-        />
+        >
+          <template #label> First name <span class="font-weight-medium text-red">*</span> </template>
+        </v-text-field>
       </v-col>
       <v-col cols="12" md="6" class="py-2">
         <v-text-field
           v-model="entryCV.lastName"
           :error-messages="vuelidate.lastName.$errors.map((e) => e.$message as string)"
-          label="Last Name"
           required
           @input="vuelidate.lastName.$touch"
           @blur="vuelidate.lastName.$touch"
-        />
+        >
+          <template #label> Last name <span class="font-weight-medium text-red">*</span> </template>
+        </v-text-field>
       </v-col>
       <v-col cols="12" md="6" class="py-2">
         <v-select v-model="entryCV.age" :items="ageRanges" label="Age" />
@@ -49,38 +41,59 @@
     <v-row class="mt-10">
       <v-col cols="12" md="6" class="py-2">
         <v-text-field
+          v-model="entryCV.email"
+          :error-messages="vuelidate.email.$errors.map((e) => e.$message as string)"
+          label="Email"
+          required
+          @input="vuelidate.email.$touch"
+          @blur="vuelidate.email.$touch"
+        >
+          <template #label> Email <span class="font-weight-medium text-red">*</span> </template>
+        </v-text-field>
+      </v-col>
+      <v-col cols="12" md="6" class="py-2 hidden-sm-and-down"></v-col>
+      <v-col cols="12" md="6" class="py-2">
+        <v-text-field
           v-model="entryCV.phone"
           :error-messages="vuelidate.phone.$errors.map((e) => e.$message as string)"
-          label="Phone Number"
           required
           @input="vuelidate.phone.$touch"
           @blur="vuelidate.phone.$touch"
-        />
+        >
+          <template #label> Phone number <span class="font-weight-medium text-red">*</span> </template>
+        </v-text-field>
       </v-col>
       <v-col cols="12" md="6" class="py-2">
-        <v-text-field v-model="entryCV.phoneAlternative" label="Alternative Phone Number" />
+        <v-text-field
+          v-model="entryCV.phoneAlternative"
+          :error-messages="vuelidate.phoneAlternative.$errors.map((e) => e.$message as string)"
+          label="Alternative phone number"
+          @input="vuelidate.phoneAlternative.$touch"
+          @blur="vuelidate.phoneAlternative.$touch"
+        />
       </v-col>
     </v-row>
 
     <v-row class="mt-10">
       <v-col cols="12" class="py-2">
-        <v-text-field v-model="entryCV.addressLine1" label="Address Line 1" />
+        <v-text-field v-model="entryCV.addressLine1" label="Address line 1" />
       </v-col>
       <v-col cols="12" class="py-2">
-        <v-text-field v-model="entryCV.addressLine2" label="Address Line 2" />
+        <v-text-field v-model="entryCV.addressLine2" label="Address line 2" />
       </v-col>
       <v-col cols="12" md="6" class="py-2">
         <v-text-field
           v-model="entryCV.addressCity"
           :error-messages="vuelidate.addressCity.$errors.map((e) => e.$message as string)"
-          label="Nearest City"
           required
           @input="vuelidate.addressCity.$touch"
           @blur="vuelidate.addressCity.$touch"
-        />
+        >
+          <template #label> Nearest city <span class="font-weight-medium text-red">*</span> </template>
+        </v-text-field>
       </v-col>
       <v-col cols="12" md="6" class="py-2">
-        <v-checkbox v-model="entryCV.preferRemote" label="Prefer Remote" />
+        <v-checkbox v-model="entryCV.preferRemote" label="Prefer remote work" />
       </v-col>
     </v-row>
 
@@ -99,7 +112,7 @@
 <script lang="ts" setup>
 import { useCVStore } from '@/stores/cv-store';
 import { useVuelidate } from '@vuelidate/core';
-import { email, required } from '@vuelidate/validators';
+import { email, required, numeric, maxLength } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
 
 const emit = defineEmits(['on-next', 'on-submit']);
@@ -115,7 +128,8 @@ const rules = {
   email: { required, email },
   firstName: { required },
   lastName: { required },
-  phone: { required },
+  phone: { required, numeric, maxLength: maxLength(10) },
+  phoneAlternative: { numeric, maxLength: maxLength(10) },
   addressCity: { required },
 };
 
