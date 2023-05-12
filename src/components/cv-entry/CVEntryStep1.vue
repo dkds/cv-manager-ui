@@ -4,7 +4,7 @@
 
     <v-row class="mt-10">
       <v-col cols="12" md="6" class="py-2">
-        <v-select v-model="entryCV.designation" :items="designations" label="Designation" />
+        <v-select v-model="entryCV.title" :items="titles" label="Title" />
       </v-col>
       <v-col cols="12" md="6" class="py-2 hidden-sm-and-down"></v-col>
       <v-col cols="12" md="6" class="py-2">
@@ -48,7 +48,7 @@
           @input="vuelidate.email.$touch"
           @blur="vuelidate.email.$touch"
         >
-          <template #label> Email <span class="font-weight-medium text-red">*</span> </template>
+          <template #label> Email address <span class="font-weight-medium text-red">*</span> </template>
         </v-text-field>
       </v-col>
       <v-col cols="12" md="6" class="py-2 hidden-sm-and-down"></v-col>
@@ -120,7 +120,7 @@ const emit = defineEmits(['on-next', 'on-submit']);
 const store = useCVStore();
 const { entryCV } = storeToRefs(store);
 
-const designations = ['Prefer not to say', 'Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev', 'Other'];
+const titles = ['Prefer not to say', 'Mr', 'Mrs', 'Ms', 'Dr', 'Prof', 'Rev', 'Other'];
 const ageRanges = ['Prefer not to say', '18-25', '26-30', '31-35', '36-45', '46-50', 'More than 50'];
 const genders = ['Prefer not to say', 'Man', 'Woman', 'Other'];
 
@@ -138,7 +138,7 @@ const vuelidate = useVuelidate(rules, entryCV);
 function clear() {
   vuelidate.value.$reset();
   store.resetCV([
-    'designation',
+    'title',
     'firstName',
     'lastName',
     'age',

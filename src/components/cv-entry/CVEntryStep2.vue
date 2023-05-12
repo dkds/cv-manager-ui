@@ -2,34 +2,42 @@
   <form>
     <v-row>
       <v-col cols="12" class="py-2">
+        <v-combobox
+          v-model="skillsList"
+          chips
+          :multiple="(true as any)"
+          required
+          :error-messages="vuelidate.skills.$errors.map((e) => e.$message as string)"
+        >
+          <template #label> What are you skills? <span class="font-weight-medium text-red">*</span> </template>
+        </v-combobox>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" class="py-2">
+        <v-select
+          v-model="entryCV.noOfGCSEPasses"
+          :items="gcsePasses"
+          required
+          :error-messages="vuelidate.noOfGCSEPasses.$errors.map((e) => e.$message as string)"
+        >
+          <template #label> No of passes at GCSE <span class="font-weight-medium text-red">*</span> </template>
+        </v-select>
+      </v-col>
+      <v-col cols="12" md="6" class="py-2 hidden-sm-and-down"></v-col>
+      <v-col cols="12" md="6" class="py-2">
         <v-text-field
           v-model="entryCV.primaryEducationLevel"
           :error-messages="vuelidate.primaryEducationLevel.$errors.map((e) => e.$message as string)"
-          label="Primary Education Level"
-          required
-          @input="vuelidate.primaryEducationLevel.$touch"
-          @blur="vuelidate.primaryEducationLevel.$touch"
-        />
+        >
+          <template #label> Primary education level <span class="font-weight-medium text-red">*</span> </template>
+        </v-text-field>
       </v-col>
-      <v-col cols="12" class="py-2">
-        <v-text-field
-          v-model="entryCV.secondaryEducationLevel"
-          :error-messages="vuelidate.secondaryEducationLevel.$errors.map((e) => e.$message as string)"
-          label="Secondary Education Level"
-          required
-          @input="vuelidate.secondaryEducationLevel.$touch"
-          @blur="vuelidate.secondaryEducationLevel.$touch"
-        />
+      <v-col cols="12" md="6" class="py-2">
+        <v-text-field v-model="entryCV.secondaryEducationLevel" label="Secondary Education Level" />
       </v-col>
-      <v-col cols="12" class="py-2">
-        <v-text-field
-          v-model="entryCV.higherEducationLevel"
-          :error-messages="vuelidate.higherEducationLevel.$errors.map((e) => e.$message as string)"
-          label="Higher Education Level"
-          required
-          @input="vuelidate.higherEducationLevel.$touch"
-          @blur="vuelidate.higherEducationLevel.$touch"
-        />
+      <v-col cols="12" md="6" class="py-2">
+        <v-text-field v-model="entryCV.higherEducationLevel" label="Higher Education Level" />
       </v-col>
     </v-row>
 
@@ -63,20 +71,24 @@ import { useVuelidate } from '@vuelidate/core';
 import { required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
+import { range } from 'lodash';
 
 const emit = defineEmits(['on-next', 'on-submit']);
 
 const store = useCVStore();
 const { entryCV } = storeToRefs(store);
 
-const rules = {
-  primaryEducationLevel: { required },
-  secondaryEducationLevel: { required },
-  higherEducationLevel: { required },
-};
+const gcsePasses = range(0, 20);
+
+const skillsList = ref(entryCV.value.skills.length ? entryCV.value.skills.split(',') : []);
 const professionalQualifications1 = ref(entryCV.value.professionalQualifications[0]);
 const professionalQualifications2 = ref(entryCV.value.professionalQualifications[1]);
 const professionalQualifications3 = ref(entryCV.value.professionalQualifications[2]);
+
+watch(skillsList, () => {
+  const skills = skillsList.value.join(',');
+  store.updateCV({ skills });
+});
 
 watch([professionalQualifications1, professionalQualifications2, professionalQualifications3], () => {
   const professionalQualifications = [];
@@ -93,8 +105,16 @@ watch([professionalQualifications1, professionalQualifications2, professionalQua
   store.updateCV({ professionalQualifications });
 });
 
+const rules = {
+  skills: { required },
+  noOfGCSEPasses: { required },
+  primaryEducationLevel: { required },
+};
 const vuelidate = useVuelidate(rules, entryCV);
 
+function onSkillChipRemove(item: any) {
+  skillsList.value.splice(skillsList.value.indexOf(item), 1);
+}
 function clear() {
   vuelidate.value.$reset();
   store.resetCV([

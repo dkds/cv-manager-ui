@@ -1,5 +1,5 @@
 <template>
-  <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="end" class="mb-10 mx-4" show-arrows>
+  <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="end" class="mb-10 mx-sm-4" show-arrows>
     <v-tab :value="0">Start</v-tab>
     <v-tab :value="1">Personal Info</v-tab>
     <v-tab :value="2">Qualifications</v-tab>
