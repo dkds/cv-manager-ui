@@ -25,6 +25,7 @@ export const useCVStore = defineStore('cv-entry', () => {
   };
 
   const entryCV = ref({ ...initialCV });
+  const cv = ref({ ...initialCV });
 
   const resetCV = (fields: Array<keyof typeof initialCV>) => {
     if (fields) {
@@ -44,5 +45,5 @@ export const useCVStore = defineStore('cv-entry', () => {
     };
   };
 
-  return { initialCV, entryCV, resetCV, updateCV };
+  return { initialCV, entryCV, resetCV, updateCV, cv };
 });

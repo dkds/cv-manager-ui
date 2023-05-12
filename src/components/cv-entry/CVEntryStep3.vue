@@ -41,7 +41,7 @@
 <script lang="ts" setup>
 import { useCVStore } from '@/stores/cv-store';
 import { useVuelidate } from '@vuelidate/core';
-import { maxValue, minValue, required } from '@vuelidate/validators';
+import { between, required, numeric } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 
@@ -51,7 +51,7 @@ const store = useCVStore();
 const { entryCV } = storeToRefs(store);
 
 const rules = {
-  experienceTotal: { required, minValue: minValue(0), maxValue: maxValue(60) },
+  experienceTotal: { required, between: between(0, 50), numeric },
 };
 const vuelidate = useVuelidate(rules, entryCV);
 
