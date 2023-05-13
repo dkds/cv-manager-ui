@@ -1,4 +1,5 @@
 import UserInfo from '@/components/UserInfo.vue';
+import { UserType } from '@/services/constants';
 import { useUserStore } from '@/stores/user-store';
 import { enableAutoUnmount, mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
@@ -16,7 +17,7 @@ describe('UserInfo.vue', () => {
   });
 
   test('shows current user email as username', async () => {
-    const user = { email: 'test', password: 'test' };
+    const user = { email: 'test', password: 'test', type: UserType.APPLICANT };
     const wrapper = mount(UserInfo, {
       global: {
         plugins: [vuetify],

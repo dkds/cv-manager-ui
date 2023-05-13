@@ -16,21 +16,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useCVStore } from '@/stores/cv-store';
-import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import CVPreview from './CVPreview.vue';
 
-const store = useCVStore();
-const { entryCV } = storeToRefs(store);
-
-const tab = ref(0);
 const search = ref('');
-
-async function next() {
-  tab.value = tab.value + 1;
-}
-async function submit() {
-  console.log(entryCV.value);
-}
 </script>
