@@ -1,8 +1,8 @@
 <template>
-  <form>
+  <v-form validate-on="submit" @submit.prevent="next">
     <v-row>
       <v-col cols="12" md="6" offset-md="3" class="py-2">
-        <v-row>
+        <v-row class="mt-sm-5 mt-md-10">
           <v-col cols="12" class="py-2">
             <v-select
               v-model="entryCV.category"
@@ -38,25 +38,36 @@
           <v-col cols="12" class="flex-row">
             <div class="d-flex flex-row">
               <v-spacer />
-              <v-btn class="d-flex" color="primary" @click="next"> next </v-btn>
+              <v-btn type="submit" class="d-flex" color="primary"> next </v-btn>
             </div>
           </v-col>
         </v-row>
       </v-col>
     </v-row>
-  </form>
+  </v-form>
 </template>
 
 <script lang="ts" setup>
 import { useCVStore } from '@/stores/cv-store';
+import { useUserStore } from '@/stores/user-store';
 import { useVuelidate } from '@vuelidate/core';
 import { email, required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
 
 const emit = defineEmits(['on-next']);
 
 const cvStore = useCVStore();
 const { entryCV } = storeToRefs(cvStore);
+
+const userStore = useUserStore();
+const { currentUser } = storeToRefs(userStore);
+
+onMounted(() => {
+  if (currentUser.value) {
+    entryCV.value.email = currentUser.value.email;
+  }
+});
 
 const categories = ['IT', 'HR', 'Finance', 'Marketing', 'Sales', 'Other'];
 
@@ -64,7 +75,6 @@ const rules = {
   email: { required, email },
   category: { required },
 };
-
 const vuelidate = useVuelidate(rules, entryCV);
 
 async function next() {

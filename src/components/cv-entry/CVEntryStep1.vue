@@ -1,10 +1,8 @@
 <template>
-  <form>
-    <v-row> </v-row>
-
-    <v-row class="mt-10">
+  <v-form validate-on="submit" @submit.prevent="next">
+    <v-row class="mt-sm-2">
       <v-col cols="12" md="6" class="py-2">
-        <v-select v-model="entryCV.title" :items="titles" label="Title" />
+        <v-select v-model="entryCV.title" :items="titles" autofocus label="Title" />
       </v-col>
       <v-col cols="12" md="6" class="py-2 hidden-sm-and-down"></v-col>
       <v-col cols="12" md="6" class="py-2">
@@ -102,11 +100,11 @@
         <div class="d-flex flex-row">
           <v-btn class="d-flex" @click="clear"> clear </v-btn>
           <v-spacer />
-          <v-btn class="d-flex" color="primary" @click="next"> next </v-btn>
+          <v-btn type="submit" class="d-flex" color="primary"> next </v-btn>
         </div>
       </v-col>
     </v-row>
-  </form>
+  </v-form>
 </template>
 
 <script lang="ts" setup>

@@ -30,27 +30,66 @@
       </v-container>
     </v-window-item>
   </v-window>
+  <div class="ma-4">
+    <v-alert v-model="showAlert" border="start" variant="tonal" closable close-label="Close Alert" color="error">
+      {{ alertText }}
+    </v-alert>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import { delay } from '@/services/util';
 import { useCVStore } from '@/stores/cv-store';
+import useVuelidate from '@vuelidate/core';
+import { required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import CVEntryStep0 from './CVEntryStep0.vue';
 import CVEntryStep1 from './CVEntryStep1.vue';
 import CVEntryStep2 from './CVEntryStep2.vue';
 import CVEntryStep3 from './CVEntryStep3.vue';
 
-const store = useCVStore();
-const { entryCV } = storeToRefs(store);
+const cvStore = useCVStore();
+const { entryCV } = storeToRefs(cvStore);
+
+cvStore.setCVInProgress();
 
 const tab = ref(0);
+const alertText = ref('');
+const showAlert = ref(false);
+
+watch(showAlert, async (visible) => {
+  if (visible) {
+    await delay(3000);
+    showAlert.value = false;
+  }
+});
+
+const rules = {
+  email: { required },
+  category: { required },
+  firstName: { required },
+  lastName: { required },
+  phone: { required },
+  addressCity: { required },
+  skills: { required },
+  noOfGCSEPasses: { required },
+  primaryEducationLevel: { required },
+  experienceTotal: { required },
+};
+const vuelidate = useVuelidate(rules, entryCV);
 
 async function next() {
   tab.value = tab.value + 1;
 }
 async function submit() {
   console.log(entryCV.value);
-  alert(JSON.stringify(entryCV.value, null, 2));
+  const valid = await vuelidate.value.$validate();
+  if (valid) {
+    cvStore.submitCV();
+  } else {
+    showAlert.value = true;
+    alertText.value = 'Please fill in all required fields in other steps';
+  }
 }
 </script>

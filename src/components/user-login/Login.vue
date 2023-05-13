@@ -44,7 +44,7 @@
 import { useCVStore } from '@/stores/cv-store';
 import { useUserStore } from '@/stores/user-store';
 import { useVuelidate } from '@vuelidate/core';
-import { email, helpers, maxLength, minLength, required } from '@vuelidate/validators';
+import { email, required } from '@vuelidate/validators';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 
@@ -53,28 +53,14 @@ const emit = defineEmits(['on-close', 'on-login']);
 const userStore = useUserStore();
 const cvStore = useCVStore();
 const { currentUser, userLoading } = storeToRefs(userStore);
-const { entryCV } = storeToRefs(cvStore);
+const { entryCV, cv } = storeToRefs(cvStore);
 
-const emailAddress = ref(entryCV.value?.email || '');
+const emailAddress = ref(entryCV.value?.email || cv.value?.email || '');
 const password = ref('');
 
 const rules = {
   emailAddress: { required, email },
-  password: {
-    required,
-    valid: helpers.withMessage(
-      'Password must contains at least one uppercase, one lowercase, one number and one special character',
-      function (value: string) {
-        const containsUppercase = /[A-Z]/.test(value);
-        const containsLowercase = /[a-z]/.test(value);
-        const containsNumber = /\d/.test(value);
-        const containsSpecial = /[#?!@$%^&*-]/.test(value);
-        return containsUppercase && containsLowercase && containsNumber && containsSpecial;
-      }
-    ),
-    minLength: minLength(9),
-    maxLength: maxLength(32),
-  },
+  password: { required },
 };
 
 const vuelidate = useVuelidate(rules, { emailAddress, password });

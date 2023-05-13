@@ -1,9 +1,10 @@
 <template>
-  <form>
-    <v-row>
+  <v-form validate-on="submit" @submit.prevent="next">
+    <v-row class="mt-sm-2">
       <v-col cols="12" class="py-2">
         <v-combobox
           v-model="skillsList"
+          autofocus
           chips
           :multiple="(true as any)"
           required
@@ -58,11 +59,11 @@
         <div class="d-flex flex-row">
           <v-btn class="d-flex" @click="clear"> clear </v-btn>
           <v-spacer />
-          <v-btn class="d-flex" color="primary" @click="next"> next </v-btn>
+          <v-btn type="submit" class="d-flex" color="primary"> next </v-btn>
         </div>
       </v-col>
     </v-row>
-  </form>
+  </v-form>
 </template>
 
 <script lang="ts" setup>
@@ -112,9 +113,6 @@ const rules = {
 };
 const vuelidate = useVuelidate(rules, entryCV);
 
-function onSkillChipRemove(item: any) {
-  skillsList.value.splice(skillsList.value.indexOf(item), 1);
-}
 function clear() {
   vuelidate.value.$reset();
   store.resetCV([
