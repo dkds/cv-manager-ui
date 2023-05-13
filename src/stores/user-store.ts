@@ -1,4 +1,4 @@
-import { ApiStatus } from '@/services/constants';
+import { ApiStatus, UserType } from '@/services/constants';
 import { delay } from '@/services/util';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
@@ -8,6 +8,7 @@ export interface User {
   password: string;
   name?: string;
   photo?: string;
+  type: UserType;
 }
 
 export const useUserStore = defineStore('UserStore', () => {
@@ -17,6 +18,9 @@ export const useUserStore = defineStore('UserStore', () => {
   });
 
   const currentUser = computed(() => user.value.data);
+  const isApplicant = computed(() => user.value.data?.type === UserType.APPLICANT);
+  const isAgencyUser = computed(() => user.value.data?.type === UserType.AGENCY_USER);
+  const loggedIn = computed(() => !!user.value.data);
   const userLoading = computed(() => user.value.status === ApiStatus.LOADING);
 
   const setUser = async (newUser: User) => {
@@ -25,6 +29,7 @@ export const useUserStore = defineStore('UserStore', () => {
     user.value.data = {
       ...user.value.data,
       ...newUser,
+      type: UserType.APPLICANT,
     };
     user.value.status = ApiStatus.SUCCESS;
   };
@@ -36,5 +41,5 @@ export const useUserStore = defineStore('UserStore', () => {
     user.value.status = ApiStatus.SUCCESS;
   };
 
-  return { userLoading, currentUser, setUser, clearUser };
+  return { userLoading, currentUser, loggedIn, setUser, clearUser, isApplicant, isAgencyUser };
 });

@@ -5,26 +5,37 @@
         <v-img src="@/assets/logo.png" height="48" width="220" class="mx-4 flex-grow-0" />
       </router-link>
       <v-spacer />
-      <v-toolbar-items class="hidden-xs me-4">
-        <v-btn prepend-icon="mdi-file-search" variant="text" to="search"> Search </v-btn>
-        <v-btn prepend-icon="mdi-file-document-plus" variant="text" to="cv"> Start Building CV </v-btn>
+      <v-toolbar-items class="hidden-sm-and-down me-4">
+        <v-btn v-if="isAgencyUser" prepend-icon="mdi-file-search" variant="text" to="search"> Search </v-btn>
+        <v-btn v-if="!isAgencyUser && !cvAvailable" prepend-icon="mdi-file-document-plus" variant="text" to="cv-entry">
+          Start Building CV
+        </v-btn>
+        <v-btn v-if="!isAgencyUser && cvAvailable" prepend-icon="mdi-file-document" variant="text" to="cv">
+          Your CV
+        </v-btn>
+        <user-info v-if="currentUser" @on-logout="logout" />
       </v-toolbar-items>
-
-      <v-btn class="hidden-xs me-4" icon>
+      <v-btn v-if="!currentUser" class="hidden-sm-and-down me-4" icon>
         <v-icon>mdi-account</v-icon>
 
-        <v-dialog v-if="!currentUser" v-model="showRegister" activator="parent" persistent width="720">
-          <user-login @on-close="showRegister = !showRegister" />
+        <v-dialog v-model="showLogin" activator="parent" persistent width="720">
+          <user-login
+            :alert-text="loginAlertText"
+            @on-close="
+              loginAlertText = '';
+              showLogin = !showLogin;
+            "
+          />
         </v-dialog>
 
         <v-menu v-if="currentUser" activator="parent" open-on-hover :close-on-content-click="false">
           <user-info @on-logout="logout" />
         </v-menu>
       </v-btn>
-      <v-app-bar-nav-icon class="hidden-sm-and-up" @click.stop="showDrawer = !showDrawer" />
+      <v-app-bar-nav-icon class="hidden-md-and-up" @click.stop="showDrawer = !showDrawer" />
     </v-app-bar>
 
-    <v-navigation-drawer v-model="showDrawer" temporary location="right" class="hidden-sm-and-up">
+    <v-navigation-drawer v-model="showDrawer" temporary location="right" class="hidden-md-and-up">
       <template v-slot:prepend>
         <v-list-item
           v-if="currentUser"
@@ -44,13 +55,32 @@
 
       <v-list class="py-1" density="compact" nav>
         <v-list-item v-if="!currentUser" :active="false" prepend-icon="mdi-account" title="Login" value="login">
-          <v-dialog v-model="showRegisterMobile" activator="parent" persistent width="720">
-            <user-login @on-close="showRegisterMobile = !showRegisterMobile" />
+          <v-dialog v-model="showLoginMobile" activator="parent" persistent width="720">
+            <user-login
+              :alert-text="loginAlertText"
+              @on-close="
+                loginAlertText = '';
+                showLoginMobile = !showLoginMobile;
+              "
+            />
           </v-dialog>
         </v-list-item>
         <v-divider class="my-1"></v-divider>
-        <v-list-item prepend-icon="mdi-file-search" title="Search" value="search" to="search" />
-        <v-list-item prepend-icon="mdi-file-document-plus" title="Start Building CV" value="cv" to="cv" />
+        <v-list-item v-if="isAgencyUser" prepend-icon="mdi-file-search" title="Search" value="search" to="search" />
+        <v-list-item
+          v-if="!isAgencyUser && !cvAvailable"
+          prepend-icon="mdi-file-document-plus"
+          title="Start Building CV"
+          value="cv"
+          to="cv-entry"
+        />
+        <v-list-item
+          v-if="!isAgencyUser && cvAvailable"
+          prepend-icon="mdi-file-document"
+          title="Your CV"
+          value="cv"
+          to="cv"
+        />
       </v-list>
     </v-navigation-drawer>
 
@@ -71,20 +101,53 @@
 <script lang="ts" setup>
 import UserInfo from '@/components/UserInfo.vue';
 import UserLogin from '@/components/user-login/UserLogin.vue';
+import { CVEntryStatus } from '@/services/constants';
+import { useCVStore } from '@/stores/cv-store';
 import { useUserStore } from '@/stores/user-store';
 import { storeToRefs } from 'pinia';
+import { watch } from 'vue';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
+const cvStore = useCVStore();
 const userStore = useUserStore();
-const { currentUser, userLoading } = storeToRefs(userStore);
+const { currentUser, userLoading, loggedIn, isAgencyUser } = storeToRefs(userStore);
+const { cvEntryStatus, cvAvailable } = storeToRefs(cvStore);
 
 const showDrawer = ref(false);
-const showRegister = ref(false);
-const showRegisterMobile = ref(false);
+const showLogin = ref(false);
+const showLoginMobile = ref(false);
+const loginAlertText = ref('');
+
+watch(cvEntryStatus, (status) => {
+  if (status === CVEntryStatus.SUBMITTED && !loggedIn.value) {
+    if (showDrawer.value) {
+      showLoginMobile.value = false;
+    } else {
+      showLogin.value = true;
+    }
+    loginAlertText.value = 'Please login to submit your CV';
+  }
+});
+watch([cvAvailable, loggedIn], ([cvAvailable, loggedIn]) => {
+  if (cvAvailable && loggedIn && router.currentRoute.value.name === 'cv-entry') {
+    router.push({ name: 'cv-view' });
+  }
+  if (!loggedIn && router.currentRoute.value.name === 'cv-view') {
+    router.push({ name: 'cv-entry' });
+  }
+});
+watch([showLogin, showLoginMobile], ([showLogin, showLoginMobile]) => {
+  if (!showLogin || !showLoginMobile) {
+    cvStore.setCVInProgress();
+  }
+});
 
 async function logout() {
-  showRegister.value = false;
-  showRegisterMobile.value = false;
+  showLogin.value = false;
+  showLoginMobile.value = false;
   userStore.clearUser();
+  cvStore.clearCurrentCV();
 }
 </script>

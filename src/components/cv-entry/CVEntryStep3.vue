@@ -1,12 +1,13 @@
 <template>
-  <form>
-    <v-row>
+  <v-form validate-on="submit" @submit.prevent="submit">
+    <v-row class="mt-sm-2">
       <v-col cols="12" sm="6" class="py-2">
         <v-text-field
           v-model="entryCV.experienceTotal"
           :error-messages="vuelidate.experienceTotal.$errors.map((e) => e.$message as string)"
           label="Total Experience (in years)"
           type="number"
+          autofocus
           required
           @input="vuelidate.experienceTotal.$touch"
           @blur="vuelidate.experienceTotal.$touch"
@@ -31,14 +32,23 @@
         <div class="d-flex flex-row">
           <v-btn class="d-flex" @click="clear"> clear </v-btn>
           <v-spacer />
-          <v-btn class="d-flex" color="primary" @click="submit"> submit </v-btn>
+          <v-btn
+            type="submit"
+            class="d-flex"
+            color="primary"
+            :loading="cvStatus === CVStatus.LOADING"
+            :disabled="cvEntryStatus === CVEntryStatus.SUBMITTED"
+          >
+            submit
+          </v-btn>
         </div>
       </v-col>
     </v-row>
-  </form>
+  </v-form>
 </template>
 
 <script lang="ts" setup>
+import { CVEntryStatus, CVStatus } from '@/services/constants';
 import { useCVStore } from '@/stores/cv-store';
 import { useVuelidate } from '@vuelidate/core';
 import { between, required, numeric } from '@vuelidate/validators';
@@ -48,7 +58,7 @@ import { ref, watch } from 'vue';
 const emit = defineEmits(['on-next', 'on-submit']);
 
 const store = useCVStore();
-const { entryCV } = storeToRefs(store);
+const { entryCV, cvEntryStatus, cvStatus } = storeToRefs(store);
 
 const rules = {
   experienceTotal: { required, between: between(0, 50), numeric },
